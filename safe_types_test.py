@@ -5,7 +5,7 @@ from safetypes import safe_types
 
 @safe_types(only_debug=True)
 def empty_function_without_typing():
-    pass
+    pass  # This function is empty but it is used only to test the function definition.
 
 
 @safe_types
@@ -25,43 +25,43 @@ def function_returning_invalid_typed_value() -> float:
 
 @safe_types
 def function_with_one_parameter_without_typing(x):
-    pass
+    pass  # This function is empty but it is used only to test the function definition.
 
 
 @safe_types
 def function_with_one_typed_parameter(x: float):
-    pass
+    pass  # This function is empty but it is used only to test the function definition.
 
 
 @safe_types
 def function_with_one_typing_parameter(x: Type[str]):
-    pass
+    pass  # This function is empty but it is used only to test the function definition.
 
 
 class ClassMethodsTest:
 
     @safe_types
     def __init__(self):
-        pass
+        pass  # This function is empty but it is used only to test the function definition.
 
     @staticmethod
     @safe_types
     def empty_static_method():
-        pass
+        pass  # This function is empty but it is used only to test the function definition.
 
     @staticmethod
     @safe_types
     def one_typed_parameter_static_method(x: str):
-        pass
+        pass  # This function is empty but it is used only to test the function definition.
 
     @safe_types
     def empty_instance_method(self):
-        pass
+        pass  # This function is empty but it is used only to test the function definition.
 
     @classmethod
     @safe_types
     def empty_class_method(cls):
-        pass
+        pass  # This function is empty but it is used only to test the function definition.
 
 
 class ChildClassMethodsTest(ClassMethodsTest):
