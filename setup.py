@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='safetypes',
-    version='0.1rc1',
+    version='0.1rc1.post1',
     packages=['safetypes'],
     url='https://github.com/wiscot/safetypes',
     license='MIT',
