@@ -1,9 +1,9 @@
 #################
 safetypes package
 #################
-Python is a not typed language, and runs under the paradigm of *try and success or fails*.
+Python is a not typed language, and runs under the paradigm of *first try and then it success or fails*.
 This package allows you to have the capability of apply **typing** features in last versions of Python,
-allowing to the programmer to have a transparent mechanism to grant that typing annotations are
+allowing to the developer to have a transparent mechanism to grant that typing annotations are
 satisfied in the execution time of their programs.
 
 To use this package you only need to add an annotation before a function or method definition::
