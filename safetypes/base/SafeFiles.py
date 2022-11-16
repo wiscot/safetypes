@@ -125,7 +125,8 @@ class SafeTypes:
             elif not isinstance(argument, parameter_type.__args__):
                 SafeTypes._raise_error(argument, parameter_type, parameter_name)
         else:
-            raise TypeError('Mismatch combination')
+            if not isinstance(argument, parameter_type):
+                SafeTypes._raise_error(argument, parameter_type, parameter_name)
 
         return True
 

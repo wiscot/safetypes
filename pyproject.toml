@@ -1,6 +1,6 @@
 [project]
 name = "safetypes"
-version = "0.1rc1.post2"
+version = "0.1rc1.post3"
 authors = [
   { name="Rafael Gutiérrez Martínez", email="ragutimar@gmail.com" },
 ]
