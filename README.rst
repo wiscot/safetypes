@@ -1,14 +1,14 @@
 #################
 safetypes package
 #################
-Python is a not typed language, and runs under the paradigm of *first try and then it success or fails*.
+Python is a non typed language, and runs under the paradigm of *first try and then it success or fails*.
 This package allows you to have the capability of apply **typing** features in last versions of Python,
 allowing to the developer to have a transparent mechanism to grant that typing annotations are
 satisfied in the execution time of their programs.
 
 To use this package you only need to add an annotation before a function or method definition::
 
-    @safetypes
+    @safe_types
     def my_func(test: str) -> int
 
 With this simple line when you run your program the annotation checks:
@@ -20,7 +20,7 @@ Also you can use the *Typing package* to have multiple types for the same argume
 the detail of typing your code::
 
     from typing import Union
-    @safetypes
+    @safe_types
     def my_func(test: Union[int, float]) -> Union[int, float]
 
 With this definition, the annotation checks if **test** argument and **return value**
