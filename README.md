@@ -1,6 +1,4 @@
-#################
-safetypes package
-#################
+# safetypes package
 Python is a non typed language, and runs under the paradigm of *first try and then it success or fails*.
 This package allows you to have the capability of apply **typing** features in last versions of Python,
 allowing to the developer to have a transparent mechanism to grant that typing annotations are
@@ -13,10 +11,10 @@ To use this package you only need to add an annotation before a function or meth
 
 With this simple line when you run your program the annotation checks:
 
-#. The **test** argument satisfies the condition to be a **str**.
-#. The **return value** satisfies the condition to be an **int**.
+1. The **test** argument satisfies the condition to be a **str**.
+2. The **return value** satisfies the condition to be an **int**.
 
-Also you can use the *Typing package* to have multiple types for the same argument or to extend
+Also, you can use the *Typing package* to have multiple types for the same argument or to extend
 the detail of typing your code::
 
     from typing import Union

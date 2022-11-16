@@ -1,11 +1,15 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "safetypes"
-version = "0.1rc1.post3"
+version = "0.1rc1.post4"
 authors = [
   { name="Rafael Gutiérrez Martínez", email="ragutimar@gmail.com" },
 ]
 description = "Python is a not typed language, and runs under the paradigm of first try and then it success or fails. This package allows you to have the capability of apply typing features in last versions of Python, allowing to the developer to have a transparent mechanism to grant that typing annotations are satisfied in the execution time of their programs."
-readme = "README.rst"
+readme = "README.md"
 license = { file="LICENSE" }
 requires-python = ">=3.5"
 classifiers = [
