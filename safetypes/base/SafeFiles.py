@@ -9,19 +9,38 @@ from safetypes.base.SafeFunctionTypes import SafeFunctionTypes
 
 class SafeTypes:
 
-    def __init__(self, wrapped, only_debug: bool = True):
+    def __init__(self, wrapped,
+                 only_debug: bool = True,
+                 strict: bool = True,
+                 args_alias: str = 'args',
+                 kwargs_alias: str = 'kwargs'
+                 ):
 
         assert callable(wrapped) or wrapped is None
         assert type(only_debug) is bool
 
         self._wrapped = wrapped
         self._only_debug = only_debug
+        self._strict = strict
+        self._args_alias = args_alias
+        self._kwargs_alias = kwargs_alias
+
         signature = inspect.signature(wrapped)
         parameter_values = signature.parameters.values()
-        self._parameter_names = tuple(parameter.name for parameter in parameter_values)
+        self._parameter_names = tuple(
+            parameter.name
+            for parameter in parameter_values
+            if parameter.name != self._args_alias and parameter.name != self._kwargs_alias
+        )
         self._parameter_types = tuple(
             self._replace(parameter.annotation, parameter.empty, object)
             for parameter in parameter_values
+            if parameter.name != self._args_alias and parameter.name != self._kwargs_alias
+        )
+        self._parameter_def = tuple(
+            parameter.default is not parameter.empty
+            for parameter in parameter_values
+            if parameter.name != self._args_alias and parameter.name != self._kwargs_alias
         )
         self._return_type = self._replace(signature.return_annotation, signature.empty, object)
 
@@ -147,14 +166,30 @@ class SafeTypes:
                                 f'the class '
                                 f'{".".join([self._module_name, self._class_name])} or a descendant class.')
 
+        if self._strict and len(arguments) > len(self._parameter_names):
+            raise TypeError(f'They are more unnamed arguments than expected.')
+
+        used_args = []
         for argument, parameter_type, parameter_name in zip(
                 arguments, self._parameter_types, self._parameter_names
         ):
             SafeTypes._evaluate(argument, parameter_type, parameter_name)
+            used_args.append(parameter_name)
 
         for parameter_name, argument in dict(**kwarguments).items():
-            parameter_type = self._parameter_types[self._parameter_names.index(parameter_name)]
-            SafeTypes._evaluate(argument, parameter_type, parameter_name)
+            if parameter_name in self._parameter_names:
+                parameter_type = self._parameter_types[self._parameter_names.index(parameter_name)]
+                SafeTypes._evaluate(argument, parameter_type, parameter_name)
+                used_args.append(parameter_name)
+            elif self._strict:
+                raise TypeError(f"Unexpected parameter {parameter_name}.")
+
+        unused_args = list(set(self._parameter_names) - set(used_args))
+        if len(unused_args) > 0:
+            for named in unused_args:
+                if not self._parameter_def[self._parameter_names.index(named)]:
+                    raise TypeError(f"Mandatory parameter {named} not found.")
+
         result = self._wrapped(*arguments, **kwarguments)
         SafeTypes._evaluate(result, self._return_type, 'return')
 
