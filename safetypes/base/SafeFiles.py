@@ -33,7 +33,7 @@ class SafeTypes:
             if parameter.name != self._args_alias and parameter.name != self._kwargs_alias
         )
         self._parameter_types = tuple(
-            self._replace(parameter.annotation, parameter.empty, object)
+            self._replace_annotation(parameter)
             for parameter in parameter_values
             if parameter.name != self._args_alias and parameter.name != self._kwargs_alias
         )
@@ -42,7 +42,7 @@ class SafeTypes:
             for parameter in parameter_values
             if parameter.name != self._args_alias and parameter.name != self._kwargs_alias
         )
-        self._return_type = self._replace(signature.return_annotation, signature.empty, object)
+        self._return_type = self._replace_annotation(signature)
 
         if (wrapped.__qualname__ == wrapped.__name__) or ('.<locals>' in wrapped.__qualname__):
             self._module_name = wrapped.__module__
@@ -75,8 +75,12 @@ class SafeTypes:
         self.wrapper = hook_wrapper
 
     @staticmethod
-    def _replace(obj, old, new):
-        return new if obj is old else obj
+    def _replace_annotation(annotation):  # obj, old, new):
+        try:
+            return object if annotation.annotation is annotation.empty else annotation.annotation
+        except AttributeError as ex:
+            return object if annotation.return_annotation is annotation.empty else annotation.return_annotation
+        # return new if obj is old else obj
 
     @staticmethod
     def _get_full_name(argument):
@@ -138,7 +142,10 @@ class SafeTypes:
                 SafeTypes._raise_error(argument, parameter_type, parameter_name)
 
         elif type(parameter_type) in [typing._UnionGenericAlias, typing._GenericAlias, typing.Type]:
-            if type(argument) is type:
+            if argument is None:
+                if types.NoneType not in parameter_type.__args__:
+                    SafeTypes._raise_error(argument, parameter_type, parameter_name)
+            elif type(argument) is type:
                 if not issubclass(argument, parameter_type.__args__):
                     SafeTypes._raise_error(argument, parameter_type, parameter_name)
             elif not isinstance(argument, parameter_type.__args__):
