@@ -7,3 +7,5 @@ J
 ,.idea/inspectionProfiles/Project_Default.xml,4/9/496a238a6afa168dbaf6efd37bb459331589579c
 J
 safetypes/test/__init__.py,3/a/3a25228c9c828d617e7a7eb6f772e43ea8fed61f
+7
+LICENSE,0/3/0398ccd0f49298b10a3d76a47800d2ebecd49859

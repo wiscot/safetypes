@@ -148,7 +148,21 @@ class SafeTypes:
             elif type(argument) is type:
                 if not issubclass(argument, parameter_type.__args__):
                     SafeTypes._raise_error(argument, parameter_type, parameter_name)
-            elif not isinstance(argument, parameter_type.__args__):
+            else:
+                err = False
+                try:
+                    if not isinstance(argument, parameter_type.__args__):
+                        err = True
+                except TypeError:
+                    for arg in parameter_type.__args__:
+                        if not type(argument) in arg and not isinstance(argument, arg):
+                            err = True
+                            break
+                    pass
+                if err:
+                    SafeTypes._raise_error(argument, parameter_type, parameter_name)
+        elif type(parameter_type) is str:
+            if argument.__class__.__qualname__ != parameter_type and SafeTypes._get_full_name(type(argument)) != parameter_type:
                 SafeTypes._raise_error(argument, parameter_type, parameter_name)
         else:
             if not isinstance(argument, parameter_type):
@@ -156,8 +170,7 @@ class SafeTypes:
 
         return True
 
-    def _ghost_wrapper(self, *arguments, **kwarguments):
-
+    def _evaluate_function_type(self, *arguments, **kwarguments):
         if self._func_type is SafeFunctionTypes.UNKNOWN:
             self._introspect_wrapped_type()
 
@@ -168,11 +181,13 @@ class SafeTypes:
                                 f'or a class that inherits from it.')
 
         elif self._func_type == SafeFunctionTypes.CLASS_METHOD:
-            if len(arguments) < 1 or (not type((arguments[0]) is type)) or (not issubclass(arguments[0], self._class_obj)):
+            if len(arguments) < 1 or (not type((arguments[0]) is type)) or (
+            not issubclass(arguments[0], self._class_obj)):
                 raise TypeError(f'For class methods, the first parameter is required and must be '
                                 f'the class '
                                 f'{".".join([self._module_name, self._class_name])} or a descendant class.')
 
+    def _evaluate_arguments(self, *arguments, **kwarguments):
         if self._strict and len(arguments) > len(self._parameter_names):
             raise TypeError(f'They are more unnamed arguments than expected.')
 
@@ -197,7 +212,15 @@ class SafeTypes:
                 if not self._parameter_def[self._parameter_names.index(named)]:
                     raise TypeError(f"Mandatory parameter {named} not found.")
 
+    def _evaluate_result(self, *arguments, **kwarguments):
         result = self._wrapped(*arguments, **kwarguments)
         SafeTypes._evaluate(result, self._return_type, 'return')
 
         return result
+
+    def _ghost_wrapper(self, *arguments, **kwarguments):
+
+        self._evaluate_function_type(*arguments, **kwarguments)
+        self._evaluate_arguments(*arguments, **kwarguments)
+
+        return self._evaluate_result(*arguments, **kwarguments)
