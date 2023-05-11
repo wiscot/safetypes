@@ -155,10 +155,14 @@ class SafeTypes:
                         err = True
                 except TypeError:
                     for arg in parameter_type.__args__:
-                        if not type(argument) in arg and not isinstance(argument, arg):
+                        if isinstance(arg, typing.ForwardRef):
+                            if argument.__class__.__qualname__ != arg.__forward_arg__ \
+                                    and SafeTypes._get_full_name(type(argument)) != arg.__forward_arg__:
+                                err = True
+                            break
+                        elif not type(argument) in arg and not isinstance(argument, arg):
                             err = True
                             break
-                    pass
                 if err:
                     SafeTypes._raise_error(argument, parameter_type, parameter_name)
         elif type(parameter_type) is str:
