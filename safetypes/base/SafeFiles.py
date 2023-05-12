@@ -165,6 +165,10 @@ class SafeTypes:
                             break
                 if err:
                     SafeTypes._raise_error(argument, parameter_type, parameter_name)
+        elif type(parameter_type) is typing.ForwardRef:
+            if argument.__class__.__qualname__ != parameter_type.__forward_arg__ \
+                    and SafeTypes._get_full_name(type(argument)) != parameter_type.__forward_arg__:
+                SafeTypes._raise_error(argument, parameter_type, parameter_name)
         elif type(parameter_type) is str:
             if argument.__class__.__qualname__ != parameter_type and SafeTypes._get_full_name(type(argument)) != parameter_type:
                 SafeTypes._raise_error(argument, parameter_type, parameter_name)
